@@ -1,69 +1,54 @@
+import fs from 'fs'
 
-import { storageService } from './async-storage.service.js'
-import { utilService } from './util.service.js'
-
-const STORAGE_KEY = 'bugDB'
-
-_createBugs()
-
+import { utilService } from "./utils.service.js";
 export const bugService = {
     query,
     getById,
-    save,
     remove,
+    save
 }
 
+const bugs = utilService.readJsonFile('data/bug.json')
 
 function query() {
-    return storageService.query(STORAGE_KEY)
-}
-function getById(bugId) {
-    return storageService.get(STORAGE_KEY, bugId)
+    return Promise.resolve(bugs)
 }
 
-function remove(bugId) {
-    return storageService.remove(STORAGE_KEY, bugId)
+function getById(id) {
+    const bug = bugs.find(bug => bug._id === id)
+    if (!bug) return Promise.reject('Bug does not exist!')
+    return Promise.resolve(bug)
+}
+
+function remove(id) {
+    const bugIdx = bugs.findIndex(bug => bug._id === id)
+    bugs.splice(bugIdx, 1)
+    return _saveBugsToFile()
+
 }
 
 function save(bug) {
     if (bug._id) {
-        return storageService.put(STORAGE_KEY, bug)
+        const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
+        bugs[bugIdx] = bug
     } else {
-        return storageService.post(STORAGE_KEY, bug)
+        bug._id = utilService.makeId()
+        bug.desc = utilService.makeLorem()
+        bugs.unshift(bug)
     }
+    return _saveBugsToFile().then(() => bug)
 }
 
 
-
-
-function _createBugs() {
-    let bugs = utilService.loadFromStorage(STORAGE_KEY)
-    if (!bugs || !bugs.length) {
-        bugs = [
-            {
-                title: "Infinite Loop Detected",
-                severity: 4,
-                _id: "1NF1N1T3"
-            },
-            {
-                title: "Keyboard Not Found",
-                severity: 3,
-                _id: "K3YB0RD"
-            },
-            {
-                title: "404 Coffee Not Found",
-                severity: 2,
-                _id: "C0FF33"
-            },
-            {
-                title: "Unexpected Response",
-                severity: 1,
-                _id: "G0053"
+function _saveBugsToFile() {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify(bugs, null, 4)
+        fs.writeFile('data/bugs.json', data, (err) => {
+            if (err) {
+                console.log(err)
+                return reject(err)
             }
-        ]
-        utilService.saveToStorage(STORAGE_KEY, bugs)
-    }
-
-
-
+            resolve()
+        })
+    })
 }
