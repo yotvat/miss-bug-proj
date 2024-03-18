@@ -1,17 +1,33 @@
 import fs from 'fs'
 
-import { utilService } from "./utils.service.js";
+import { utilService } from "./util.service.js"
+
 export const bugService = {
     query,
     getById,
+    save,
     remove,
-    save
+
 }
 
-const bugs = utilService.readJsonFile('data/bug.json')
+const bugs = utilService.readJsonFile('data/bugs.json')
 
 function query() {
     return Promise.resolve(bugs)
+}
+
+
+function save(bug) {
+    if (bug._id) {
+        const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
+        bugs[bugIdx] = bug
+    } else {
+        bug._id = utilService.makeId()
+        bug.desc = utilService.makeLorem()
+        bug.createdAt = Date.now()
+        bugs.unshift(bug)
+    }
+    return _saveBugsToFile().then(() => bug)
 }
 
 function getById(id) {
@@ -26,19 +42,6 @@ function remove(id) {
     return _saveBugsToFile()
 
 }
-
-function save(bug) {
-    if (bug._id) {
-        const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
-        bugs[bugIdx] = bug
-    } else {
-        bug._id = utilService.makeId()
-        bug.desc = utilService.makeLorem()
-        bugs.unshift(bug)
-    }
-    return _saveBugsToFile().then(() => bug)
-}
-
 
 function _saveBugsToFile() {
     return new Promise((resolve, reject) => {

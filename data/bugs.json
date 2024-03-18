@@ -1,21 +1,34 @@
 [
     {
+        "severity": null,
+        "createdAt": 1710773867657,
+        "_id": "Rbplo"
+    },
+    {
         "title": "Infinite Loop Detected",
         "severity": 4,
-        "_id": "1NF1N1T3"
+        "_id": "1NF1N1T3",
+        "createdAt": 1542107359455,
+        "description": "problem when clicking Save"
     },
     {
         "title": "Keyboard Not Found",
+        "description": "bad bug",
+        "createdAt": 1542107359454,
         "severity": 3,
         "_id": "K3YB0RD"
     },
     {
         "title": "404 Coffee Not Found",
+        "createdAt": 154210735943,
+        "description": "horiible bug",
         "severity": 2,
         "_id": "C0FF33"
     },
     {
         "title": "Unexpected Response",
+        "createdAt": 1542107359468,
+        "description": "shtuyot bemitz",
         "severity": 1,
         "_id": "G0053"
     }
