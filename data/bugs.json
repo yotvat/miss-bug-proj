@@ -1,10 +1,5 @@
 [
     {
-        "severity": null,
-        "createdAt": 1710773867657,
-        "_id": "Rbplo"
-    },
-    {
         "title": "Infinite Loop Detected",
         "severity": 4,
         "_id": "1NF1N1T3",

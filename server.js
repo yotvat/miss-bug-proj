@@ -23,7 +23,7 @@ app.get('/api/bug', (req, res) => {
 
 
 
-// save Bug (add/update)
+// save Bug (add)
 app.get('/api/bug/save', (req, res) => {
     const bugToSave = {
         title: req.query.title,
@@ -37,6 +37,17 @@ app.get('/api/bug/save', (req, res) => {
         .catch((err) => {
             loggerService.error('Cannot save bug', err)
             res.status(400).send('Cannot save bug')
+        })
+})
+
+// get by id
+app.get('/api/bug/:id', (req, res) => {
+    const bugId = req.params.id
+    bugService.getById(bugId)
+        .then(bug => res.send(bug))
+        .catch(err => {
+            loggerService.error(err)
+            res.status(400).send('Cannot get bug')
         })
 })
 
