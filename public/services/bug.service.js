@@ -13,13 +13,24 @@ export const bugService = {
     getById,
     save,
     remove,
+    getFilterFromParams
 }
 
 
-function query() {
+function query(filterBy = title) {
     return axios.get(BASE_URL)
         .then(res => res.data)
-        .then(bugs => bugs)
+        .then(bugs => {
+            if (filterBy.title) {
+                const regex = new RegExp(filterBy.title, 'i')
+                bugs = bugs.filter(bug => regex.test(bug.title))
+            }
+            if (filterBy.description) {
+                const regex = new RegExp(filterBy.description, 'i')
+                bugs = bugs.filter(bug => regex.test(bug.description))
+            }
+            return bugs
+        })
 
 
     // return storageService.query(STORAGE_KEY)
@@ -40,17 +51,15 @@ function remove(bugId) {
 }
 
 function save(bug) {
-    console.log('bug:', bug)
+    // console.log('bug:', bug)
     const url = BASE_URL + 'save'
-    let queryParams = `?title=${bug.title}&severity=${bug.severity}`
+    let queryParams = `?title=${bug.title}&severity=${bug.severity}&description=${bug.description}`
     if (bug._id) {
-        queryParams += `_id=${bug._id}&desc=${bug.desc}`
+        queryParams += `_id=${bug._id}&createdAt=${bug.createdAt}`
     }
     return axios.get(url + queryParams).then(res => res.data)
 
 }
-
-
 
 
 function _createBugs() {
@@ -83,4 +92,15 @@ function _createBugs() {
 
 
 
+}
+function getDefaultFilter() {
+    return { title: '', description: '' }
+}
+
+function getFilterFromParams(searchParams = {}) {
+    const defaultFilter = getDefaultFilter()
+    return {
+        title: searchParams.get('title') || defaultFilter.title,
+        description: searchParams.get('description') || defaultFilter.description
+    }
 }
