@@ -4,7 +4,9 @@ import { bugService } from './services/bug.service.js'
 
 const app = express()
 
-app.get('/', (req, res) => res.send('Hello there'))
+// Express config:
+app.use(express.static('public'))
+
 
 // Get Bugs (READ)
 app.get('/api/bug', (req, res) => {
